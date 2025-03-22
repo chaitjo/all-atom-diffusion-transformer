@@ -4,10 +4,10 @@
 root_dir: ${oc.env:PROJECT_ROOT}
 
 # path to data directory
-data_dir: ${paths.root_dir}/data/
+data_dir: /home/ckj24/rds/hpc-work/all-atom-diffusion-transformer/data/
 
 # path to logging directory (used by hydra, wandb, etc.)
-log_dir: ${paths.root_dir}/logs/
+log_dir: /home/ckj24/rds/hpc-work/all-atom-diffusion-transformer/logs/
 
 # path for saving visualizations (eg. if you want to use scratch for faster I/O)
 viz_dir: ${hydra:runtime.output_dir}
