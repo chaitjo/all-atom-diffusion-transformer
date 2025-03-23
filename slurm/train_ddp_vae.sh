@@ -4,9 +4,9 @@
 #SBATCH -o /home/ckj24/rds/hpc-work/all-atom-diffusion-transformer/slurm/logs/train%j.out # File to which STDOUT will be written
 #SBATCH -e /home/ckj24/rds/hpc-work/all-atom-diffusion-transformer/slurm/logs/train%j.err # File to which STDERR will be written
 
-#! Which project should be charged (NB Wilkes2 projects end in '-GPU'): 
+#! Which project should be charged (NB Wilkes2 projects end in '-GPU'):
 #SBATCH --account T2-CS181-GPU
-#! How many whole nodes should be allocated? 
+#! How many whole nodes should be allocated?
 
 #! Partition:
 #! Do not change:
@@ -17,7 +17,7 @@
 
 #! How many total CPU tasks will there be in total?
 #! Note probably this should not exceed the total number of GPUs in use.
-#SBATCH --ntasks=1 
+#SBATCH --ntasks=1
 ###SBATCH --ntasks-per-node=8
 
 #! Specify the number of GPUs per node (between 1 and 8).
@@ -34,9 +34,9 @@
 #! How much wallclock time will be required? (at most 72:00:00 in general)
 #SBATCH --time=24:00:00
 
-#! What types of email messages do you wish to receive? 
-#SBATCH --mail-type=begin 
-#SBATCH --mail-type=end 
+#! What types of email messages do you wish to receive?
+#SBATCH --mail-type=begin
+#SBATCH --mail-type=end
 #SBATCH --mail-user=ckj24
 
 #! sbatch directives end here (put any additional directives above this line)
@@ -49,10 +49,10 @@
 #! (note that SLURM reproduces the environment at submission irrespective of ~/.bashrc):
 bash /etc/profile.d/modules.sh             # Enables the module command
 module purge                               # Removes all modules still loaded
-module load rhel8/default-amp              # REQUIRED - loads the basic environment 
+module load rhel8/default-amp              # REQUIRED - loads the basic environment
 
 #! Insert additional module load commands after this line if needed:
-module unload miniconda/3 
+module unload miniconda/3
 module load cuda/12.1
 module load gcc/11
 module list                                # Lists the modules loaded
