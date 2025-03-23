@@ -370,7 +370,7 @@ class LatentDiffusionLitModule(LightningModule):
         """
         with torch.no_grad():
             # save masks used to apply augmentations
-            sample_is_periodic = batch.dataset_idx != DATASET_TO_IDX["qm9"]
+            sample_is_periodic = batch.dataset_idx == DATASET_TO_IDX["mp20"]
             node_is_periodic = sample_is_periodic[batch.batch]
 
             if self.hparams.augmentations.frac_coords == True:
