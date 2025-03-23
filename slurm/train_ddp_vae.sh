@@ -1,10 +1,8 @@
-"""Copyright (c) Meta Platforms, Inc. and affiliates."""
-
 #!/bin/bash
 #! Name of the job:
-#SBATCH -J vae
+#SBATCH -J vaeqmof
 #SBATCH -o /home/ckj24/rds/hpc-work/all-atom-diffusion-transformer/slurm/logs/train%j.out # File to which STDOUT will be written
-#SBATCH -o /home/ckj24/rds/hpc-work/all-atom-diffusion-transformer/slurm/logs/train%j.err # File to which STDERR will be written
+#SBATCH -e /home/ckj24/rds/hpc-work/all-atom-diffusion-transformer/slurm/logs/train%j.err # File to which STDERR will be written
 
 #! Which project should be charged (NB Wilkes2 projects end in '-GPU'): 
 #SBATCH --account T2-CS181-GPU
@@ -23,7 +21,7 @@
 ###SBATCH --ntasks-per-node=8
 
 #! Specify the number of GPUs per node (between 1 and 8).
-#SBATCH --gres=gpu:8
+#SBATCH --gres=gpu:4
 ###SBATCH --gpus-per-node=8
 
 #! Specify the number of CPUs for your job. You should always allocate only 10 CPUs per requested GPU.
@@ -34,7 +32,7 @@
 ####SBATCH --mem=64GB
 
 #! How much wallclock time will be required? (at most 72:00:00 in general)
-#SBATCH --time=72:00:00
+#SBATCH --time=24:00:00
 
 #! What types of email messages do you wish to receive? 
 #SBATCH --mail-type=begin 
@@ -49,17 +47,20 @@
 
 #! Optionally modify the environment seen by the application
 #! (note that SLURM reproduces the environment at submission irrespective of ~/.bashrc):
-./etc/profile.d/modules.sh                 # Enables the module command
+bash /etc/profile.d/modules.sh             # Enables the module command
 module purge                               # Removes all modules still loaded
 module load rhel8/default-amp              # REQUIRED - loads the basic environment 
 
 #! Insert additional module load commands after this line if needed:
 module unload miniconda/3 
-module load cuda/11.8
+module load cuda/12.1
+module load gcc/11
+module list                                # Lists the modules loaded
 
 #! Load python environment
 source /home/ckj24/.bashrc
 mamba activate /home/ckj24/rds/hpc-work/envs/myenv
+export LD_LIBRARY_PATH=/home/ckj24/rds/hpc-work/envs/myenv/lib:$LD_LIBRARY_PATH
 
 ############################################################
 
@@ -73,7 +74,7 @@ loss_kl=0.00001  # 0.0001 / 0.00001
 #! (for logging purposes)
 latent_str="latent@${latent_dim}"
 kl_str="kl@${loss_kl}"
-name="vae_${latent_str}_${kl_str}"
+name="vae_${latent_str}_${kl_str}_qm9-mp20-qmof150"
 
 #! Run options for the application:
 options="trainer=ddp logger=wandb name=$name ++autoencoder_module.latent_dim=$latent_dim ++autoencoder_module.loss_weights.loss_kl.mp20=$loss_kl ++autoencoder_module.loss_weights.loss_kl.qm9=$loss_kl"
