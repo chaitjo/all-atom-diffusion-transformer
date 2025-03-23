@@ -26,7 +26,8 @@ mamba activate /home/ckj24/rds/hpc-work/envs/myenv
 
 # install pytorch according to instructions (use CUDA version for your system)
 # https://pytorch.org/get-started/
-mamba install -y pytorch==2.3.1 torchvision==0.18.1 torchaudio==2.3.1 pytorch-cuda=12.1 -c pytorch -c nvidia -c defaults
+# mamba install -y pytorch==2.3.1 torchvision==0.18.1 torchaudio==2.3.1 pytorch-cuda=12.1 -c pytorch -c nvidia -c defaults
+pip install torch==2.3.1 torchvision==0.18.1 torchaudio==2.3.1 --index-url https://download.pytorch.org/whl/cu121
 
 # install pytorch geometric (use CUDA version for your system)
 # https://pytorch-geometric.readthedocs.io/
