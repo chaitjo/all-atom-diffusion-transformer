@@ -53,7 +53,7 @@ Our codebase is built upon the [lightning-hydra template](https://github.com/ash
 **Datasets:**
 
 All datasets will be downloaded and processed automatically when running the code for the first time via PyG/HuggingFace:
-- Small molecules: [QM9 on PyG](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.datasets.QM9.html)
+- Small molecules: [QM9 on PyG](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.datasets.QM9.html) (also [on HuggingFace](https://huggingface.co/datasets/chaitjo/QM9_ADiT) for processed files)
 - Inorganic crystals: [MP20 on HuggingFace](https://huggingface.co/datasets/chaitjo/MP20_ADiT) (includes processed files)
 - Metal-organic frameworks: [QMOF150 on HuggingFace](https://huggingface.co/datasets/chaitjo/QMOF150_ADiT) (includes processed files)
 
@@ -123,7 +123,7 @@ Note that evaluation is best done via wandb sweep (template: `configs/sweep/eval
 
 ## Citation
 
-ArXiv link: [*"All-atom Diffusion Transformers: Unified generative modelling of molecules and materials"*](https://www.arxiv.org/abs/2503.03965)
+ArXiv link: [*All-atom Diffusion Transformers: Unified generative modelling of molecules and materials*](https://www.arxiv.org/abs/2503.03965)
 
 ```
 @article{joshi2025allatom,
