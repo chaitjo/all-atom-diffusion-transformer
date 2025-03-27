@@ -14,15 +14,10 @@ datamodule:
       removeHs: false  # only retain heavy atoms
       proportion: 0.0
 
-    qmof150:
-      _target_: src.data.components.qmof150_dataset.QMOF150
-      root: ${paths.data_dir}/qmof
-      proportion: 0.0
-
   batch_size:
-    train: 256
-    val: 256
-    test: 256
+    train: 1024
+    val: 1024
+    test: 1024
 
   num_workers:
     train: 16

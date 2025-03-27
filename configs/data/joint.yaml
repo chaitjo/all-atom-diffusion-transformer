@@ -9,20 +9,15 @@ datamodule:
       proportion: 1.0
 
     qm9:
-      _target_: torch_geometric.datasets.QM9
-      root: ${paths.data_dir}/qm9
+      _target_: src.data.components.geom_dataset.GEOM
+      root: ${paths.data_dir}/geom
       removeHs: false  # only retain heavy atoms
       proportion: 1.0
 
-    qmof150:
-      _target_: src.data.components.qmof150_dataset.QMOF150
-      root: ${paths.data_dir}/qmof
-      proportion: 1.0
-
   batch_size:
-    train: 256
-    val: 256
-    test: 256
+    train: 512
+    val: 512
+    test: 512
 
   num_workers:
     train: 16

@@ -3,11 +3,11 @@
 # specify here default configuration
 # order of defaults determines the order in which configs override each other
 defaults:
-  - data: joint  # joint / qm9_only / mp20_only
+  - data: qm9_only  # joint / qm9_only / mp20_only
   - encoder: transformer
   - decoder: transformer
   - autoencoder_module: vae
-  - callbacks: autoencoder_default  # autoencoder_default / _qm9_only / _mp20_only
+  - callbacks: autoencoder_qm9_only  # autoencoder_default / _qm9_only / _mp20_only
   - logger: null # set logger here or use command line (e.g. `python train.py logger=tensorboard`)
   - trainer: default
   - paths: default
@@ -24,7 +24,7 @@ task_name: "train_autoencoder"
 # tags to help you identify your experiments
 # you can overwrite this in experiment configs
 # overwrite from command line with `python train.py tags="[first_tag, second_tag]"`
-tags: ["joint", "autoencoder", "train"]
+tags: ["joint", "autoencoder", "train", "GEOM"]
 
 # set False to skip model training
 train: True
