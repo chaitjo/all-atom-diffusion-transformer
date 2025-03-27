@@ -9,27 +9,26 @@ from lightning import LightningDataModule
 from omegaconf import DictConfig
 from torch.utils.data import ConcatDataset
 from torch_geometric.data import Data
-from torch_geometric.datasets import QM9
 from torch_geometric.loader import DataLoader
 
+from src.data.components.geom_dataset import GEOM
 from src.data.components.mp20_dataset import MP20
-from src.data.components.qmof150_dataset import QMOF150
 from src.utils import pylogger
 
 log = pylogger.RankedLogger(__name__, rank_zero_only=True)
 
 
 def custom_transform(data, removeHs=True):
-    atoms_to_keep = torch.ones_like(data.z, dtype=torch.bool)
-    num_atoms = data.num_nodes
+    atoms_to_keep = torch.ones_like(data.atom_types, dtype=torch.bool)
+    num_atoms = data.num_nodes[0].item()
     if removeHs:
-        atoms_to_keep = data.z != 1
+        atoms_to_keep = data.atom_types != 1
         num_atoms = atoms_to_keep.sum().item()
 
     # PyG object attributes consistent with CrystalDataset
     return Data(
-        id=f"qm9_{data.name}",
-        atom_types=data.z[atoms_to_keep],
+        id=data.id,
+        atom_types=data.atom_types[atoms_to_keep],
         pos=data.pos[atoms_to_keep],
         frac_coords=torch.zeros_like(data.pos[atoms_to_keep]),
         cell=torch.zeros((1, 3, 3)),
@@ -51,8 +50,7 @@ class JointDataModule(LightningDataModule):
     """`LightningDataModule` for jointly training on 3D atomic datasets:
 
     - MP20: crystal structures
-    - QM9: small molecules
-    - QMOF150: metal-organic frameworks
+    - GEOM: small molecules
 
     A `LightningDataModule` implements 7 key methods:
 
@@ -111,8 +109,8 @@ class JointDataModule(LightningDataModule):
 
         :param stage: The stage to setup. Either `"fit"`, `"validate"`, `"test"`, or `"predict"`. Defaults to ``None``.
         """
-        # QM9 dataset
-        qm9_dataset = QM9(
+        # GEOM dataset
+        qm9_dataset = GEOM(
             root=self.hparams.datasets.qm9.root,
             transform=partial(custom_transform, removeHs=self.hparams.datasets.qm9.removeHs),
         ).shuffle()
@@ -123,9 +121,9 @@ class JointDataModule(LightningDataModule):
         #     os.path.join(self.hparams.datasets.qm9.root, "num_nodes_bincount.pt"),
         # )
         # create train, val, test split
-        self.qm9_train_dataset = qm9_dataset[:100000]
-        self.qm9_val_dataset = qm9_dataset[100000:118000]
-        self.qm9_test_dataset = qm9_dataset[118000:]
+        self.qm9_train_dataset = qm9_dataset[2048:]
+        self.qm9_val_dataset = qm9_dataset[:1024]
+        self.qm9_test_dataset = qm9_dataset[1024:2048]
         # retain subset of dataset; can be used to train on only one dataset, too
         self.qm9_train_dataset = self.qm9_train_dataset[
             : int(len(self.qm9_train_dataset) * self.hparams.datasets.qm9.proportion)
@@ -160,44 +158,17 @@ class JointDataModule(LightningDataModule):
             : int(len(self.mp20_test_dataset) * self.hparams.datasets.mp20.proportion)
         ]
 
-        # QMOF150 dataset
-        qmof150_dataset = QMOF150(root=self.hparams.datasets.qmof150.root).shuffle()
-        # # save num_nodes histogram for sampling from generative models
-        # num_nodes = torch.tensor([data["num_nodes"] for data in qmof150_dataset])
-        # torch.save(
-        #     torch.bincount(num_nodes),
-        #     os.path.join(self.hparams.datasets.qmof150.root, "num_nodes_bincount.pt"),
-        # )
-        # create train, val, test split
-        self.qmof150_train_dataset = qmof150_dataset[2048:]
-        self.qmof150_val_dataset = qmof150_dataset[:1024]
-        self.qmof150_test_dataset = qmof150_dataset[1024:2048]
-        # retain subset of dataset; can be used to train on only one dataset, too
-        self.qmof150_train_dataset = self.qmof150_train_dataset[
-            : int(len(self.qmof150_train_dataset) * self.hparams.datasets.qmof150.proportion)
-        ]
-        self.qmof150_val_dataset = self.qmof150_val_dataset[
-            : int(len(self.qmof150_val_dataset) * self.hparams.datasets.qmof150.proportion)
-        ]
-        self.qmof150_test_dataset = self.qmof150_test_dataset[
-            : int(len(self.qmof150_test_dataset) * self.hparams.datasets.qmof150.proportion)
-        ]
-
         if stage is None or stage in ["fit", "validate"]:
-            self.train_dataset = ConcatDataset(
-                [self.mp20_train_dataset, self.qm9_train_dataset, self.qmof150_train_dataset]
-            )
+            self.train_dataset = ConcatDataset([self.mp20_train_dataset, self.qm9_train_dataset])
             log.info(
-                f"Training dataset: {len(self.train_dataset)} samples (MP20: {len(self.mp20_train_dataset)}, QM9: {len(self.qm9_train_dataset)}, QMOF150: {len(self.qmof150_train_dataset)})"
+                f"Training dataset: {len(self.train_dataset)} samples (MP20: {len(self.mp20_train_dataset)}, QM9: {len(self.qm9_train_dataset)})"
             )
             log.info(f"MP20 validation dataset: {len(self.mp20_val_dataset)} samples")
             log.info(f"QM9 validation dataset: {len(self.qm9_val_dataset)} samples")
-            log.info(f"QMOF150 validation dataset: {len(self.qmof150_val_dataset)} samples")
 
         if stage is None or stage in ["test", "predict"]:
             log.info(f"MP20 test dataset: {len(self.mp20_test_dataset)} samples")
             log.info(f"QM9 test dataset: {len(self.qm9_test_dataset)} samples")
-            log.info(f"QMOF150 test dataset: {len(self.qmof150_test_dataset)} samples")
 
     def train_dataloader(self) -> DataLoader:
         """Create and return the train dataloader.
@@ -233,13 +204,6 @@ class JointDataModule(LightningDataModule):
                 pin_memory=False,
                 shuffle=False,
             ),
-            DataLoader(
-                dataset=self.qmof150_val_dataset,
-                batch_size=self.hparams.batch_size.val,
-                num_workers=self.hparams.num_workers.val,
-                pin_memory=False,
-                shuffle=False,
-            ),
         ]
 
     def test_dataloader(self) -> Sequence[DataLoader]:
@@ -257,13 +221,6 @@ class JointDataModule(LightningDataModule):
             ),
             DataLoader(
                 dataset=self.qm9_test_dataset,
-                batch_size=self.hparams.batch_size.test,
-                num_workers=self.hparams.num_workers.test,
-                pin_memory=False,
-                shuffle=False,
-            ),
-            DataLoader(
-                dataset=self.qmof150_test_dataset,
                 batch_size=self.hparams.batch_size.test,
                 num_workers=self.hparams.num_workers.test,
                 pin_memory=False,
