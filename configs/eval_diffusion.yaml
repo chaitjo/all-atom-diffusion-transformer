@@ -3,9 +3,9 @@
 # specify here default configuration
 # order of defaults determines the order in which configs override each other
 defaults:
-  - data: joint
+  - data: qm9_only
   - diffusion_module: ldm
-  - callbacks: diffusion_default
+  - callbacks: diffusion_qm9_only
   - logger: null # set logger here or use command line (e.g. `python train.py logger=tensorboard`)
   - trainer: default
   - paths: default
@@ -22,10 +22,10 @@ task_name: "eval_diffusion"
 # tags to help you identify your experiments
 # you can overwrite this in experiment configs
 # overwrite from command line with `python train.py tags="[first_tag, second_tag]"`
-tags: ["joint", "diffusion", "eval"]
+tags: ["joint", "diffusion", "eval", "GEOM"]
 
 # provide checkpoint path to evaluate
-ckpt_path: ""
+ckpt_path: null
 
 # seed for random number generators in pytorch, numpy and python.random
 seed: 9

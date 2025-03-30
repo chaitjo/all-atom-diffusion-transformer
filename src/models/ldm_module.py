@@ -33,12 +33,10 @@ log = pylogger.RankedLogger(__name__)
 IDX_TO_DATASET = {
     0: "mp20",
     1: "qm9",
-    2: "qmof150",
 }
 DATASET_TO_IDX = {
     "mp20": 0,  # periodic
     "qm9": 1,  # non-periodic
-    "qmof150": 0,  # periodic
 }
 
 
@@ -123,7 +121,6 @@ class LatentDiffusionLitModule(LightningModule):
                 ),
                 removeHs=self.hparams.sampling.removeHs,
             ),
-            "qmof150": MOFGenerationEvaluator(),
         }
         self.test_generation_evaluators = copy.deepcopy(self.val_generation_evaluators)
 
@@ -184,38 +181,6 @@ class LatentDiffusionLitModule(LightningModule):
                         "sampling_time": MeanMetric(),
                     }
                 ),
-                "qmof150": ModuleDict(
-                    {
-                        "loss": MeanMetric(),
-                        "x_loss": MeanMetric(),
-                        "x_loss t=[0,25)": MeanMetric(),
-                        "x_loss t=[25,50)": MeanMetric(),
-                        "x_loss t=[50,75)": MeanMetric(),
-                        "x_loss t=[75,100)": MeanMetric(),
-                        "t_avg": MeanMetric(),
-                        "valid_rate": MeanMetric(),
-                        "unique_rate": MeanMetric(),
-                        "has_carbon": MeanMetric(),
-                        "has_hydrogen": MeanMetric(),
-                        "has_atomic_overlaps": MeanMetric(),
-                        "has_overcoordinated_c": MeanMetric(),
-                        "has_overcoordinated_n": MeanMetric(),
-                        "has_overcoordinated_h": MeanMetric(),
-                        "has_undercoordinated_c": MeanMetric(),
-                        "has_undercoordinated_n": MeanMetric(),
-                        "has_undercoordinated_rare_earth": MeanMetric(),
-                        "has_metal": MeanMetric(),
-                        "has_lone_molecule": MeanMetric(),
-                        "has_high_charges": MeanMetric(),
-                        # "is_porous": MeanMetric(),
-                        "has_suspicicious_terminal_oxo": MeanMetric(),
-                        "has_undercoordinated_alkali_alkaline": MeanMetric(),
-                        "has_geometrically_exposed_metal": MeanMetric(),
-                        # 'has_3d_connected_graph': MeanMetric(),
-                        "all_checks": MeanMetric(),
-                        "sampling_time": MeanMetric(),
-                    }
-                ),
             }
         )
         self.test_metrics = copy.deepcopy(self.val_metrics)
@@ -231,14 +196,7 @@ class LatentDiffusionLitModule(LightningModule):
             ),
             "qm9": torch.nn.Parameter(
                 torch.load(
-                    os.path.join(self.hparams.sampling.data_dir, f"qm9/num_nodes_bincount.pt"),
-                    map_location="cpu",
-                ),
-                requires_grad=False,
-            ),
-            "qmof150": torch.nn.Parameter(
-                torch.load(
-                    os.path.join(self.hparams.sampling.data_dir, f"qmof/num_nodes_bincount.pt"),
+                    os.path.join(self.hparams.sampling.data_dir, f"geom/num_nodes_bincount.pt"),
                     map_location="cpu",
                 ),
                 requires_grad=False,
@@ -253,7 +211,6 @@ class LatentDiffusionLitModule(LightningModule):
                 requires_grad=False,
             ),
             "qm9": None,
-            "qmof150": None,
         }
 
     def forward(self, batch: Data, sample_posterior: bool = True):
@@ -512,6 +469,9 @@ class LatentDiffusionLitModule(LightningModule):
         generation_evaluators = getattr(self, f"{stage}_generation_evaluators")
 
         for dataset in metrics.keys():
+            if dataset != "qm9":
+                continue
+
             generation_evaluators[dataset].device = metrics[dataset]["loss"].device
             t_start = time.time()
             for samples_so_far in tqdm(
