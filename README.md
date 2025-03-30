@@ -57,7 +57,7 @@ All datasets will be downloaded and processed automatically when running the cod
 - Inorganic crystals: [MP20 on HuggingFace](https://huggingface.co/datasets/chaitjo/MP20_ADiT) (includes processed files)
 - Metal-organic frameworks: [QMOF150 on HuggingFace](https://huggingface.co/datasets/chaitjo/QMOF150_ADiT) (includes processed files)
 
-Downloading and processing all three datasets can take around 1/2 hour, but only needs to happen one time.
+Downloading and processing all three datasets can take around 30 minutes, but only needs to happen one time.
 
 **Training and evaluating models:**
 
