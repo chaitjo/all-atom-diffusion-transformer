@@ -1,6 +1,6 @@
 _target_: src.models.ldm_module.LatentDiffusionLitModule
 
-autoencoder_ckpt: ""  # path to VAE checkpoint
+autoencoder_ckpt: "/home/ckj24/adit-geom/logs/geom_ckpt/vae-epoch@74-step@85275-val_qm9_match_rate@0.9922.ckpt"  # path to VAE checkpoint
 
 denoiser:
   _target_: src.models.denoisers.dit.DiT
@@ -14,7 +14,7 @@ interpolant:
   _target_: src.models.interpolants.flow_matching.FlowMatchingInterpolant
   min_t: 1e-2
   corrupt: True
-  num_timesteps: 500
+  num_timesteps: 250
   self_condition: true
   self_condition_prob: 0.5
 
@@ -24,8 +24,8 @@ augmentations:
 
 sampling:
   cfg_scale: 4.0
-  num_samples: 10000
-  batch_size: 1000
+  num_samples: 100
+  batch_size: 100
   data_dir: ${paths.data_dir}
   visualize: true
   save_dir: ${paths.viz_dir}

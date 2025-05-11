@@ -6,7 +6,7 @@ defaults:
 
 model_checkpoint:
   dirpath: ${paths.output_dir}/checkpoints
-  filename: "vae-epoch@{epoch}-step@{step}-val_qm9_match_rate@{val_qm9/match_rate:.4f}"
+  filename: "vae-epoch@{epoch}-step@{step}-match_rate@{val_qm9/match_rate:.4f}"
   monitor: "val_qm9/match_rate"
   mode: "max"
   save_last: True

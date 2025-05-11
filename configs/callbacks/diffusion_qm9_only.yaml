@@ -7,8 +7,8 @@ defaults:
 
 model_checkpoint:
   dirpath: ${paths.output_dir}/checkpoints
-  filename: "ldm-epoch@{epoch}-step@{step}-val_qm9_valid_rate@{val_qm9/valid_rate:.4f}"
-  monitor: "val_qm9/valid_rate"
+  filename: "ldm-epoch@{epoch}-step@{step}-valid_rate@{val_qm9/valid_rate:.4f}-posebusters_valid@{val_qm9/posebusters_valid:.4f}"
+  monitor: "val_qm9/posebusters_valid"
   mode: "max"
   save_last: True
 

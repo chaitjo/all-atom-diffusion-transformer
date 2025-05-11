@@ -42,7 +42,7 @@ augmentations:
   pos: true
 
 visualization:
-  visualize: true
+  visualize: false
   save_dir: ${paths.viz_dir}/
 
 # compile model for faster training with pytorch 2.0

@@ -17,38 +17,34 @@ parameters:
     value: 9
 
   ckpt_path:
-    value: ...
-  # Or set manually in configs/diffusion_module/ldm.yaml
+    value: "/home/ckj24/adit-geom/logs/geom_ckpt/ldm-epoch@299-step@185194-val_qm9_valid_rate@0.9600.ckpt"
 
-  ++diffusion_module.denoiser.autoencoder_ckpt:
-    value: ...
-  # # Or set manually in configs/eval_diffusion.yaml
+  ++diffusion_module.autoencoder_ckpt:
+    value: "/home/ckj24/adit-geom/logs/geom_ckpt/vae-epoch@74-step@85275-val_qm9_match_rate@0.9922.ckpt"
 
   ++diffusion_module.interpolant.num_timesteps:
     values: [
-      25,
-      50,
-      100,
-      250,
       500,
       1000,
     ]
 
   ++diffusion_module.sampling.cfg_scale:
     values: [
-      1.0,
       2.0,
-      3.0,
       4.0,
-      6.0,
-      8.0,
+    ]
+
+  ++diffusion_module.sampling.removeHs:
+    values: [
+      true,
+      false,
     ]
 
   ++diffusion_module.sampling.num_samples:
     value: 10000
 
   ++diffusion_module.sampling.batch_size:
-    value: 1000
+    value: 2000
 
   trainer:
     value: gpu
@@ -57,7 +53,7 @@ parameters:
     value: wandb
 
   name:
-    value: "eval_nt@${diffusion_module.interpolant.num_timesteps}_cfg@${diffusion_module.sampling.cfg_scale}"
+    value: "GEOM_eval_nt@${diffusion_module.interpolant.num_timesteps}_cfg@${diffusion_module.sampling.cfg_scale}"
 
 command:
   - ${env}

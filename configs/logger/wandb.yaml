@@ -8,7 +8,7 @@ wandb:
   save_dir: "${paths.output_dir}"
   id: null # pass correct id to resume experiment!
   anonymous: null # enable anonymous logging
-  project: "all-atom-diffusion-transformer"
+  project: "ADiT_GEOM"
   log_model: False # upload lightning ckpts
   prefix: "" # a string to put at the beginning of metric keys
   entity: "chaitjo" # set to name of your wandb user/team
