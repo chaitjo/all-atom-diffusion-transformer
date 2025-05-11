@@ -114,12 +114,12 @@ class JointDataModule(LightningDataModule):
             root=self.hparams.datasets.qm9.root,
             transform=partial(custom_transform, removeHs=self.hparams.datasets.qm9.removeHs),
         ).shuffle()
-        # save num_nodes histogram for sampling from generative models
-        num_nodes = torch.tensor([data["num_nodes"] for data in qm9_dataset])
-        torch.save(
-            torch.bincount(num_nodes),
-            os.path.join(self.hparams.datasets.qm9.root, "num_nodes_bincount.pt"),
-        )
+        # # save num_nodes histogram for sampling from generative models
+        # num_nodes = torch.tensor([data["num_nodes"] for data in qm9_dataset])
+        # torch.save(
+        #     torch.bincount(num_nodes),
+        #     os.path.join(self.hparams.datasets.qm9.root, "num_nodes_bincount.pt"),
+        # )
         # create train, val, test split
         self.qm9_train_dataset = qm9_dataset[:1172577]
         self.qm9_val_dataset = qm9_dataset[1172577 : 1172577 + 146411]

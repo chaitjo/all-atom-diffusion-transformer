@@ -178,6 +178,7 @@ class LatentDiffusionLitModule(LightningModule):
                         "aromatic_ring_flatness": MeanMetric(),
                         "double_bond_flatness": MeanMetric(),
                         "internal_energy": MeanMetric(),
+                        "posebusters_valid": MeanMetric(),
                         "sampling_time": MeanMetric(),
                     }
                 ),

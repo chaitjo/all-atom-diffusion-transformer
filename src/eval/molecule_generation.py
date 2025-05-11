@@ -118,7 +118,9 @@ class MoleculeGenerationEvaluator:
                     len(novel_smiles) / len(valid_smiles), device=self.device
                 ),
             }
-            pb_metrics_dict = self.buster.bust(valid_molecules, None, None).mean().to_dict()
+            pb_metrics_dict = self.buster.bust(valid_molecules, None, None)
+            pb_metrics_dict["posebusters_valid"] = pb_metrics_dict.all(axis=1)
+            pb_metrics_dict = pb_metrics_dict.mean().to_dict()
         else:
             validity_metrics_dict = {
                 "valid_rate": torch.tensor(0.0, device=self.device),
@@ -136,6 +138,7 @@ class MoleculeGenerationEvaluator:
                 "aromatic_ring_flatness": 0.0,
                 "double_bond_flatness": 0.0,
                 "internal_energy": 0.0,
+                "posebusters_valid": 0.0,
             }
 
         metrics_dict = {**validity_metrics_dict, **pb_metrics_dict}

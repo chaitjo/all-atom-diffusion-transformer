@@ -56,87 +56,19 @@ class GEOM(InMemoryDataset):
 
     @property
     def raw_file_names(self) -> List[str]:
-        return ["geom_data_list.pt"]
-        # return ["train_data.pickle", "val_data.pickle", "test_data.pickle"]
+        return ["train.pt", "val.pt", "test.pt"]
 
     @property
     def processed_file_names(self) -> List[str]:
-        return [
-            "geom.pt",
-        ]
+        return ["geom.pt"]
 
     def download(self) -> None:
         return
 
     def process(self) -> None:
-        pyg_data_list = torch.load("/home/ckj24/adit-geom/data/geom/raw/geom_data_list.pt")
-        self.save(pyg_data_list, os.path.join(self.root, f"processed/geom.pt"))
-        
-        # pyg_data_list = []
-        # smiles_list = []
-
-        # for split in [
-        #     "test",
-        #     "val",
-        # ]:  # "train" is too large to load in memory...
-        #     with open(os.path.join(self.root, "raw", f"{split}_data.pickle"), "rb") as f:
-        #         raw_data_list = pickle.load(f)
-
-        #     print(f"Processing {split} data with {len(raw_data_list)} entries.")
-        #     n_samples = 0
-        #     for entry_idx, entry in tqdm(enumerate(raw_data_list), total=len(raw_data_list)):
-        #         smiles, data = entry
-        #         for conformer_idx, mol in enumerate(data):
-        #             if conformer_idx >= 5:
-        #                 break
-
-        #             N = mol.GetNumAtoms()
-
-        #             # 3D coordinates
-        #             pos = mol.GetConformer().GetPositions()
-        #             pos = torch.tensor(pos, dtype=torch.float)
-
-        #             # Atom types
-        #             atomic_number = []
-        #             for atom in mol.GetAtoms():
-        #                 atomic_number.append(atom.GetAtomicNum())
-        #             z = torch.tensor(atomic_number, dtype=torch.long)
-
-        #             # Metadata
-        #             id = f"geom_{split}_{entry_idx}_{conformer_idx}"
-        #             smiles = Chem.MolToSmiles(mol, isomericSmiles=True)
-        #             smiles_list.append(smiles)
-
-        #             pyg_data = Data(
-        #                 id=id,
-        #                 atom_types=z,
-        #                 pos=pos,
-        #                 frac_coords=torch.zeros_like(pos),
-        #                 cell=torch.zeros((1, 3, 3)),
-        #                 lattices=torch.zeros(1, 6),
-        #                 lattices_scaled=torch.zeros(1, 6),
-        #                 lengths=torch.zeros(1, 3),
-        #                 lengths_scaled=torch.zeros(1, 3),
-        #                 angles=torch.zeros(1, 3),
-        #                 angles_radians=torch.zeros(1, 3),
-        #                 num_atoms=torch.LongTensor([N]),
-        #                 num_nodes=torch.LongTensor([N]),  # special attribute used for PyG batching
-        #                 spacegroup=torch.zeros(1, dtype=torch.long),  # null spacegroup
-        #                 token_idx=torch.arange(N),
-        #                 dataset_idx=torch.tensor(
-        #                     [1], dtype=torch.long
-        #                 ),  # 1 --> indicates non-periodic/molecule
-        #             )
-        #             pyg_data_list.append(pyg_data)
-        #             n_samples += 1
-
-        # # Save processed data
-        # self.save(pyg_data_list, os.path.join(self.root, f"processed/geom.pt"))
-
-        # # Save metadata
-        # num_nodes = torch.tensor([data["num_nodes"] for data in pyg_data_list])
-        # torch.save(
-        #     torch.bincount(num_nodes),
-        #     os.path.join(self.root, "num_nodes_bincount.pt"),
-        # )
-        # torch.save(smiles_list, os.path.join(self.root, f"smiles.pt"))
+        return
+        # train_list = torch.load("/home/ckj24/adit-geom/data/geom/raw/train.pt")
+        # val_list = torch.load("/home/ckj24/adit-geom/data/geom/raw/val.pt")
+        # test_list = torch.load("/home/ckj24/adit-geom/data/geom/raw/test.pt")
+        # all_list = train_list + val_list + test_list
+        # self.save(all_list, os.path.join(self.root, f"processed/geom.pt"))
