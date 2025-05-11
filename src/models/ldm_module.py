@@ -117,7 +117,7 @@ class LatentDiffusionLitModule(LightningModule):
             ),
             "qm9": MoleculeGenerationEvaluator(
                 dataset_smiles_list=torch.load(
-                    os.path.join(self.hparams.sampling.data_dir, f"qm9/smiles.pt"),
+                    os.path.join(self.hparams.sampling.data_dir, f"geom/smiles.pt"),
                 ),
                 removeHs=self.hparams.sampling.removeHs,
             ),

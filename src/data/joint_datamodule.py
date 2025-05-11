@@ -20,7 +20,7 @@ log = pylogger.RankedLogger(__name__, rank_zero_only=True)
 
 def custom_transform(data, removeHs=True):
     atoms_to_keep = torch.ones_like(data.atom_types, dtype=torch.bool)
-    num_atoms = data.num_nodes[0].item()
+    num_atoms = len(data.atom_types)
     if removeHs:
         atoms_to_keep = data.atom_types != 1
         num_atoms = atoms_to_keep.sum().item()
@@ -114,16 +114,16 @@ class JointDataModule(LightningDataModule):
             root=self.hparams.datasets.qm9.root,
             transform=partial(custom_transform, removeHs=self.hparams.datasets.qm9.removeHs),
         ).shuffle()
-        # # save num_nodes histogram for sampling from generative models
-        # num_nodes = torch.tensor([data["num_nodes"] for data in qm9_dataset])
-        # torch.save(
-        #     torch.bincount(num_nodes),
-        #     os.path.join(self.hparams.datasets.qm9.root, "num_nodes_bincount.pt"),
-        # )
+        # save num_nodes histogram for sampling from generative models
+        num_nodes = torch.tensor([data["num_nodes"] for data in qm9_dataset])
+        torch.save(
+            torch.bincount(num_nodes),
+            os.path.join(self.hparams.datasets.qm9.root, "num_nodes_bincount.pt"),
+        )
         # create train, val, test split
-        self.qm9_train_dataset = qm9_dataset[2048:]
-        self.qm9_val_dataset = qm9_dataset[:1024]
-        self.qm9_test_dataset = qm9_dataset[1024:2048]
+        self.qm9_train_dataset = qm9_dataset[:1172577]
+        self.qm9_val_dataset = qm9_dataset[1172577 : 1172577 + 146411]
+        self.qm9_test_dataset = qm9_dataset[1172577 + 146411 : 1172577 + 146411 + 146798]
         # retain subset of dataset; can be used to train on only one dataset, too
         self.qm9_train_dataset = self.qm9_train_dataset[
             : int(len(self.qm9_train_dataset) * self.hparams.datasets.qm9.proportion)
