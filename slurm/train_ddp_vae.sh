@@ -1,8 +1,8 @@
 #!/bin/bash
 #! Name of the job:
-#SBATCH -J vaeqmof
-#SBATCH -o /home/ckj24/rds/hpc-work/all-atom-diffusion-transformer/slurm/logs/train%j.out # File to which STDOUT will be written
-#SBATCH -e /home/ckj24/rds/hpc-work/all-atom-diffusion-transformer/slurm/logs/train%j.err # File to which STDERR will be written
+#SBATCH -J vae
+#SBATCH -o /home/ckj24/rds/hpc-work/all-atom-diffusion-transformer/slurm/logs/GEOM/train_vae_%j.out # File to which STDOUT will be written
+#SBATCH -e /home/ckj24/rds/hpc-work/all-atom-diffusion-transformer/slurm/logs/GEOM/train_vae_%j.err # File to which STDERR will be written
 
 #! Which project should be charged (NB Wilkes2 projects end in '-GPU'):
 #SBATCH --account T2-CS181-GPU
@@ -65,7 +65,7 @@ export LD_LIBRARY_PATH=/home/ckj24/rds/hpc-work/envs/myenv/lib:$LD_LIBRARY_PATH
 ############################################################
 
 #! Full path to application executable:
-application="srun python /home/ckj24/all-atom-diffusion-transformer/src/train_autoencoder.py"
+application="srun python /home/ckj24/adit-geom/src/train_autoencoder.py"
 
 #! Set hparams in configs/autoencoder_module/vae.yaml, or below:
 latent_dim=8  # 4 / 8
@@ -74,13 +74,13 @@ loss_kl=0.00001  # 0.0001 / 0.00001
 #! (for logging purposes)
 latent_str="latent@${latent_dim}"
 kl_str="kl@${loss_kl}"
-name="vae_${latent_str}_${kl_str}_qm9-mp20-qmof150"
+name="vae_${latent_str}_${kl_str}_GEOM"
 
 #! Run options for the application:
 options="trainer=ddp logger=wandb name=$name ++autoencoder_module.latent_dim=$latent_dim ++autoencoder_module.loss_weights.loss_kl.mp20=$loss_kl ++autoencoder_module.loss_weights.loss_kl.qm9=$loss_kl"
 
 #! Work directory (i.e. where the job will run):
-workdir="/home/ckj24/all-atom-diffusion-transformer/"
+workdir="/home/ckj24/adit-geom/"
 
 CMD="$application $options"
 
