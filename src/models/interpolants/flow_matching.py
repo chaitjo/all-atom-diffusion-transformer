@@ -101,6 +101,8 @@ class FlowMatchingInterpolant:
         num_tokens,
         emb_dim,
         model,
+        dataset_idx,
+        spacegroup,
         num_timesteps=None,
         x_0=None,
         x_1=None,
@@ -114,6 +116,8 @@ class FlowMatchingInterpolant:
             num_tokens (int): Number of tokens in each sample.
             emb_dim (int): Dimension of each token.
             model (nn.Module): Denoiser model to use.
+            dataset_idx (torch.Tensor): Dataset index, used for classifier-free guidance. (B, 1)
+            spacegroup (torch.Tensor): Spacegroup, used for classifier-free guidance. (B, 1)
             num_timesteps (int): Number of timesteps to integrate over.
             x_0 (torch.Tensor): Initial sample to start from.
             x_1 (torch.Tensor): Final sample to end at.
@@ -134,7 +138,6 @@ class FlowMatchingInterpolant:
             token_idx = torch.arange(num_tokens, device=self.device, dtype=torch.float32)[
                 None
             ].repeat(batch_size, 1)
-        batch = {"token_mask": token_mask, "diffuse_mask": token_mask, "token_idx": token_idx}
 
         # Set-up time
         if num_timesteps is None:
@@ -144,26 +147,29 @@ class FlowMatchingInterpolant:
 
         tokens_traj = [x_0]
         clean_traj = []
+        x_sc = None
         for t_2 in ts[1:]:
             # Run denoiser model
             x_t_1 = tokens_traj[-1]
             if self.corrupt:
-                batch["x_t"] = x_t_1
+                x = x_t_1
             else:
                 if x_1 is None:
                     raise ValueError("Must provide x_1 if not corrupting.")
-                batch["x_t"] = x_1
-            batch["t"] = torch.ones((batch_size, 1), device=self.device) * t_1
+                x = x_1
+            t = torch.ones((batch_size, 1), device=self.device) * t_1
             d_t = t_2 - t_1
 
+            # Run denoiser model
             with torch.no_grad():
-                model_out = model(batch)
+                pred_x_1 = model(
+                    x, t, dataset_idx, spacegroup, token_mask, x_sc
+                )
 
             # Process model output
-            pred_x_1 = model_out["pred_x"]
             clean_traj.append(pred_x_1)
             if self.self_condition:
-                batch["x_sc"] = pred_x_1
+                x_sc = pred_x_1
 
             # Take reverse step
             x_t_2 = self._x_euler_step(d_t, t_1, pred_x_1, x_t_1)
@@ -175,15 +181,16 @@ class FlowMatchingInterpolant:
         t_1 = ts[-1]
         x_t_1 = tokens_traj[-1]
         if self.corrupt:
-            batch["x_t"] = x_t_1
+            x = x_t_1
         else:
             if x_1 is None:
                 raise ValueError("Must provide x_1 if not corrupting.")
-            batch["x_t"] = x_1
-        batch["t"] = torch.ones((batch_size, 1), device=self.device) * t_1
+            x = x_1
+        t = torch.ones((batch_size, 1), device=self.device) * t_1
         with torch.no_grad():
-            model_out = model(batch)
-        pred_x_1 = model_out["pred_x"]
+            pred_x_1 = model(
+                x, t, dataset_idx, spacegroup, token_mask, x_sc
+            )
         clean_traj.append(pred_x_1)
         tokens_traj.append(pred_x_1)
 
