@@ -1,8 +1,8 @@
 #!/bin/bash
 #! Name of the job:
 #SBATCH -J sweep
-#SBATCH -o /home/ckj24/rds/hpc-work/all-atom-diffusion-transformer/slurm/logs/sweep%j.out # File to which STDOUT will be written
-#SBATCH -e /home/ckj24/rds/hpc-work/all-atom-diffusion-transformer/slurm/logs/sweep%j.err # File to which STDERR will be written
+#SBATCH -o /home/ckj24/rds/hpc-work/all-atom-diffusion-transformer/slurm/logs/GEOM/sweep_%j.out # File to which STDOUT will be written
+#SBATCH -e /home/ckj24/rds/hpc-work/all-atom-diffusion-transformer/slurm/logs/GEOM/sweep_%j.err # File to which STDERR will be written
 
 #! Which project should be charged (NB Wilkes2 projects end in '-GPU'):
 #SBATCH --account T2-CS181-GPU
@@ -14,7 +14,7 @@
 #SBATCH -p ampere
 
 # Array of jobs for sweep
-#SBATCH --array=0-3
+#SBATCH --array=0-11
 
 #! How many whole compute nodes should be allocated?
 #SBATCH --nodes=1
@@ -55,7 +55,7 @@ export LD_LIBRARY_PATH=/home/ckj24/rds/hpc-work/envs/myenv/lib:$LD_LIBRARY_PATH
 ############################################################
 
 #! Full path to application executable:
-application="wandb agent chaitjo/all-atom-diffusion-transformer/8iddijlu"
+application="wandb agent chaitjo/ADiT_GEOM/6tx7v1sv"
 
 #! Run options for the application:
 options="--count 1"
