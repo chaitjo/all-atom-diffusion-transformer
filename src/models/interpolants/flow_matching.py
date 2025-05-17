@@ -1,7 +1,7 @@
 """Copyright (c) Meta Platforms, Inc. and affiliates."""
 
 import copy
-
+import numpy as np
 import torch
 
 
@@ -142,7 +142,14 @@ class FlowMatchingInterpolant:
         # Set-up time
         if num_timesteps is None:
             num_timesteps = self.num_timesteps
+        # # Linear time schedule:
         ts = torch.linspace(self.min_t, 1.0, num_timesteps)
+        # 
+        # # Logarithmic time schedule:
+        # ts = (1 - np.geomspace(self.min_t, 1.0, num_timesteps)).tolist()
+        # ts.reverse()
+        # ts = torch.tensor(ts, device=self.device)
+        # 
         t_1 = ts[0]
 
         tokens_traj = [x_0]
@@ -258,7 +265,14 @@ class FlowMatchingInterpolant:
         # Set-up time
         if num_timesteps is None:
             num_timesteps = self.num_timesteps
+        # # Linear time schedule:
         ts = torch.linspace(self.min_t, 1.0, num_timesteps)
+        # 
+        # # Logarithmic time schedule:
+        # ts = (1 - np.geomspace(self.min_t, 1.0, num_timesteps)).tolist()
+        # ts.reverse()
+        # ts = torch.tensor(ts, device=self.device)
+        # 
         t_1 = ts[0]
 
         tokens_traj = [x_0]
