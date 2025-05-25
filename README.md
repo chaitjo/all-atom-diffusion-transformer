@@ -1,6 +1,17 @@
 # All-atom Diffusion Transformers
 
-Code for the paper [*"All-atom Diffusion Transformers: Unified generative modelling of molecules and materials"*](https://www.arxiv.org/abs/2503.03965), by [Chaitanya K. Joshi](https://www.chaitjo.com/), [Xiang Fu](https://xiangfu.co/), [Yi-Lun Liao](https://www.linkedin.com/in/yilunliao), [Vahe Gharakhanyan](https://gvahe.github.io/), [Benjamin Kurt Miller](https://www.mathben.com/), [Anuroop Sriram*](https://anuroopsriram.com/), and [Zachary W. Ulissi*](https://zulissi.github.io/) from FAIR Chemistry at Meta (* Joint last author).
+[![arXiv](https://img.shields.io/badge/PDF-arXiv-blue)](https://www.arxiv.org/abs/2503.03965)
+[![Code](https://img.shields.io/badge/Code-GitHub-red)](https://github.com/facebookresearch/all-atom-diffusion-transformer/)
+[![Weights](https://img.shields.io/badge/Weights-HuggingFace-yellow)](https://huggingface.co/chaitjo/all-atom-diffusion-transformer)
+[![X](https://img.shields.io/badge/X_thread-@chaitjo-blue)](https://x.com/chaitjo/status/1899114667219304525)
+[![YouTube](https://img.shields.io/badge/Talk-YouTube-red)](https://www.youtube.com/watch?v=NiY4NLzemnU)
+[![Slides](https://img.shields.io/badge/Slides-chaitjo.com-green)](https://www.chaitjo.com/publication/joshi-2025-allatom/All_Atom_Diffusion_Transformers_Slides.pdf)
+<a target="_blank" href="https://colab.research.google.com/drive/1wHXsP0SHZ-Lx6Brgg-osuvTFrWw3M7oW?usp=sharing">
+  <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
+</a>
+
+
+Code for the paper [*"All-atom Diffusion Transformers: Unified generative modelling of molecules and materials"*](https://www.arxiv.org/abs/2503.03965), by [Chaitanya K. Joshi](https://www.chaitjo.com/), [Xiang Fu](https://xiangfu.co/), [Yi-Lun Liao](https://www.linkedin.com/in/yilunliao), [Vahe Gharakhanyan](https://gvahe.github.io/), [Benjamin Kurt Miller](https://www.mathben.com/), [Anuroop Sriram*](https://anuroopsriram.com/), and [Zachary W. Ulissi*](https://zulissi.github.io/) from FAIR Chemistry at Meta, published at ICML 2025 (* Joint last author).
 
 All-atom Diffusion Transformers (ADiTs) jointly generate both periodic materials and non-periodic molecular systems using a unified latent diffusion framework:
 - An autoencoder maps a unified, all-atom representations of molecules and materials to a shared latent embedding space; and
@@ -53,7 +64,7 @@ Our codebase is built upon the [lightning-hydra template](https://github.com/ash
 **Datasets:**
 
 All datasets will be downloaded and processed automatically when running the code for the first time via PyG/HuggingFace:
-- Small molecules: [QM9 on PyG](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.datasets.QM9.html) (also [on HuggingFace](https://huggingface.co/datasets/chaitjo/QM9_ADiT) for processed files)
+- Small molecules: [QM9 on PyG](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.datasets.QM9.html) (also [on HuggingFace](https://huggingface.co/datasets/chaitjo/QM9_ADiT) for processed files) or [GEOM-DRUGS on HuggingFace](https://huggingface.co/datasets/chaitjo/GEOM-DRUGS_ADiT) (includes processed files)
 - Inorganic crystals: [MP20 on HuggingFace](https://huggingface.co/datasets/chaitjo/MP20_ADiT) (includes processed files)
 - Metal-organic frameworks: [QMOF150 on HuggingFace](https://huggingface.co/datasets/chaitjo/QMOF150_ADiT) (includes processed files)
 
@@ -81,6 +92,21 @@ All our experiments were performed on V100 GPUs. We generally trained all models
 
 **Step 4:** Evaluate trained DiT model for molecule and crystal generation by setting the checkpoint path in `configs/eval_diffusion.yaml` and running `src/eval_diffusion.py`.
 Note that evaluation is best done via wandb sweep (template: `configs/sweep/eval_sweep_template.yaml`) and example script: `slurm/sweep_gpu.sh`. The sweep template requires setting the path to the checkpoint of the DiT to be evaluated (as well as the corresponding VAE) and needs to be started on wandb. Once created, you will get the command to run the sweep based on its wandb id. You can then launch the sweep on your cluster via `slurm/sweep_gpu.sh`.
+
+**Model weights:**
+
+Model weights for ADiT trained jointly on QM9 and MP20 can be downloaded [on HuggingFace](https://huggingface.co/chaitjo/all-atom-diffusion-transformer). 
+Note that these checkpoints are the result of an independent reproduction of this research by Chaitanya K. Joshi, and may not correspond to the exact models/performance metrics reported in the final manuscript. These checkpoints can be used to run inference as described in Step 4 above.
+
+Here is a minimal notebook for loading an ADiT checkpoint and sampling some crystals or molecules: 
+<a target="_blank" href="https://colab.research.google.com/drive/1wHXsP0SHZ-Lx6Brgg-osuvTFrWw3M7oW?usp=sharing">
+  <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
+</a>
+
+Examples of 10,000 sampled crystals and molecules are also available on HuggingFace:
+- [Crystals as CIF files](https://huggingface.co/chaitjo/all-atom-diffusion-transformer/resolve/main/ADiT_crystals_mp20.zip) (MP20)
+- [Molecules as PDB files](https://huggingface.co/chaitjo/all-atom-diffusion-transformer/resolve/main/ADiT_molecules_qm9.zip) (QM9)
+- [Molecules as PDB files](https://huggingface.co/chaitjo/all-atom-diffusion-transformer/resolve/main/ADiT_molecules_geom.zip) (GEOM-DRUGS)
 
 ## Project Structure
 
@@ -123,13 +149,15 @@ Note that evaluation is best done via wandb sweep (template: `configs/sweep/eval
 
 ## Citation
 
+Accepted as a conference paper at ICML 2025.
+Also presented as a [Spotlight talk](https://www.youtube.com/watch?v=NiY4NLzemnU) at ICLR 2025 AI for Accelerated Materials Design Workshop.
 ArXiv link: [*All-atom Diffusion Transformers: Unified generative modelling of molecules and materials*](https://www.arxiv.org/abs/2503.03965)
 
 ```
-@article{joshi2025allatom,
+@inproceedings{joshi2025allatom,
   title={All-atom Diffusion Transformers: Unified generative modelling of molecules and materials},
   author={Chaitanya K. Joshi and Xiang Fu and Yi-Lun Liao and Vahe Gharakhanyan and Benjamin Kurt Miller and Anuroop Sriram and Zachary W. Ulissi},
-  journal={arXiv preprint},
+  booktitle={International Conference on Machine Learning},
   year={2025},
 }
 ```

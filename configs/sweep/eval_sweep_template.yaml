@@ -20,7 +20,7 @@ parameters:
     value: ...
   # Or set manually in configs/diffusion_module/ldm.yaml
 
-  ++diffusion_module.denoiser.autoencoder_ckpt:
+  ++diffusion_module.autoencoder_ckpt:
     value: ...
   # # Or set manually in configs/eval_diffusion.yaml
 

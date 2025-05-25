@@ -479,7 +479,7 @@ class VariationalAutoencoderLitModule(LightningModule):
         out, encoded_batch = self.forward(batch)
 
         # undo noise augmentation before calculating loss
-        if self.hparams.augmentations.noise == True:
+        if self.hparams.augmentations.noise > 0.0:
             batch.atom_types = atom_types_
             batch.pos = pos_
             batch.frac_coords = frac_coords_

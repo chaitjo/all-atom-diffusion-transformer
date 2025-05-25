@@ -9,7 +9,6 @@ import numpy as np
 import pandas as pd
 import torch
 import wandb
-from mofchecker import MOFChecker
 from pymatgen.analysis.structure_matcher import StructureMatcher
 from pymatgen.core.lattice import Lattice
 from pymatgen.core.structure import Structure
@@ -97,6 +96,8 @@ class MOFGenerationEvaluator:
 
         # NOTE MOFChecker seems to cause segfaults when used in our slurm environment
         # in an iterative manner, but works all fine when used in a notebook iteratively.
+
+        # from mofchecker import MOFChecker
 
         # mofchecker_dict = []
         # for s in tqdm(valid_structs, desc="    MOFChecker"):
