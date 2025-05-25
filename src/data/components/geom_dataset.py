@@ -67,8 +67,4 @@ class GEOM(InMemoryDataset):
 
     def process(self) -> None:
         return
-        # train_list = torch.load("/home/ckj24/adit-geom/data/geom/raw/train.pt")
-        # val_list = torch.load("/home/ckj24/adit-geom/data/geom/raw/val.pt")
-        # test_list = torch.load("/home/ckj24/adit-geom/data/geom/raw/test.pt")
-        # all_list = train_list + val_list + test_list
-        # self.save(all_list, os.path.join(self.root, f"processed/geom.pt"))
+        

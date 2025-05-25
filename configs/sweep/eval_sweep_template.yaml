@@ -8,31 +8,27 @@ metric: # Does not matter, as we are using sweep to run the experiment.
 
 parameters:
   data:
-    value: qm9_only
+    value: joint
 
   diffusion_module:
     value: ldm
 
   seed:
-    values: 
-    - 9
-    - 99
+    value: 9
 
   ckpt_path:
-    value: "/home/ckj24/adit-geom/logs/train_diffusion/runs/DiT-B__vae_latent@8_kl@0.00001_GEOM_resume1405_2025-05-14_07-47-54/checkpoints/last.ckpt"
+    value: ...
+  # Or set manually in configs/diffusion_module/ldm.yaml
 
   ++diffusion_module.autoencoder_ckpt:
-    value: "/home/ckj24/adit-geom/logs/train_autoencoder/runs/vae_latent@8_kl@0.00001_GEOM_2025-05-11_23-17-48/checkpoints/vae-epoch@24-step@14300-val_geom_match_rate@0.9903.ckpt"
-
-  ++diffusion_module.denoiser.d_model:
-    value: 768  # 384, 768, 1024
-  ++diffusion_module.denoiser.nhead:
-    value: 12  # 6, 12, 16
-  ++diffusion_module.denoiser.num_layers:
-    value: 12  # 12, 12, 24
+    value: ...
+  # # Or set manually in configs/eval_diffusion.yaml
 
   ++diffusion_module.interpolant.num_timesteps:
     values: [
+      25,
+      50,
+      100,
       250,
       500,
       1000,
@@ -40,18 +36,19 @@ parameters:
 
   ++diffusion_module.sampling.cfg_scale:
     values: [
+      1.0,
       2.0,
+      3.0,
       4.0,
+      6.0,
+      8.0,
     ]
-
-  ++diffusion_module.sampling.removeHs:
-    value: true
 
   ++diffusion_module.sampling.num_samples:
     value: 10000
 
   ++diffusion_module.sampling.batch_size:
-    value: 500
+    value: 1000
 
   trainer:
     value: gpu
@@ -60,7 +57,7 @@ parameters:
     value: wandb
 
   name:
-    value: "ADiT-B_eval_nt@${diffusion_module.interpolant.num_timesteps}_cfg@${diffusion_module.sampling.cfg_scale}"
+    value: "eval_nt@${diffusion_module.interpolant.num_timesteps}_cfg@${diffusion_module.sampling.cfg_scale}"
 
 command:
   - ${env}

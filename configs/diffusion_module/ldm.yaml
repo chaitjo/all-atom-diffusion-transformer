@@ -1,6 +1,6 @@
 _target_: src.models.ldm_module.LatentDiffusionLitModule
 
-autoencoder_ckpt: "/home/ckj24/adit-geom/logs/train_autoencoder/runs/vae_latent@8_kl@0.00001_GEOM_2025-05-11_23-17-48/checkpoints/vae-epoch@24-step@14300-val_geom_match_rate@0.9903.ckpt"
+autoencoder_ckpt: "" # path to VAE checkpoint
 
 denoiser:
   _target_: src.models.denoisers.dit.DiT

@@ -14,7 +14,7 @@
 #SBATCH -p ampere
 
 # Array of jobs for sweep
-#SBATCH --array=0-11
+#SBATCH --array=0-7
 
 #! How many whole compute nodes should be allocated?
 #SBATCH --nodes=1
@@ -55,7 +55,7 @@ export LD_LIBRARY_PATH=/home/ckj24/rds/hpc-work/envs/myenv/lib:$LD_LIBRARY_PATH
 ############################################################
 
 #! Full path to application executable:
-application="wandb agent chaitjo/ADiT_GEOM/6tx7v1sv"
+application="wandb agent chaitjo/ADiT_GEOM/9ks5k7c9"
 
 #! Run options for the application:
 options="--count 1"

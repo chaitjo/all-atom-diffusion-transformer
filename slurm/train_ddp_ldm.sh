@@ -62,19 +62,16 @@ application="srun python /home/ckj24/adit-geom/src/train_diffusion.py"
 #! Set autoencoder_ckpt and hparams in configs/diffusion_module/ldm.yaml, or below:
 d_x=8  # 4 / 8
 kl=0.00001  # 0.0001 / 0.00001
-num_layers=24  # 12, 12, 24
-d_model=1024  # 384, 768, 1024
-nhead=16  # 6, 12, 16
-# for DiT-L, add to options: ++data.datamodule.batch_size.train=64 ++trainer.accumulate_grad_batches=4
+num_layers=12  # 12, 12, 24
+d_model=768  # 384, 768, 1024
+nhead=12  # 6, 12, 16
+# for DiT-L, add to options: ++data.datamodule.batch_size.train=64 ++trainer.accumulate_grad_batches=4 ++trainer.check_val_every_n_epoch=10
 
 #! (for logging purposes)
-name="DiT-L__vae_latent@${d_x}_kl@${kl}_GEOM_resume1505"
-
-#! Resume from checkpoint:
-ckpt_path="/home/ckj24/adit-geom/logs/train_diffusion/runs/DiT-L__vae_latent@8_kl@0.00001_GEOM_2025-05-13_22-38-03/checkpoints/last.ckpt"
+name="DiT-B__vae_latent@${d_x}_kl@${kl}_GEOM"
 
 #! Run options for the application:
-options="++data.datamodule.batch_size.train=64 ++trainer.accumulate_grad_batches=4 ckpt_path=$ckpt_path trainer=ddp logger=wandb name=$name ++diffusion_module.denoiser.num_layers=$num_layers ++diffusion_module.denoiser.d_model=$d_model ++diffusion_module.denoiser.nhead=$nhead ++diffusion_module.denoiser.d_x=$d_x"
+options="trainer=ddp logger=wandb name=$name ++diffusion_module.denoiser.num_layers=$num_layers ++diffusion_module.denoiser.d_model=$d_model ++diffusion_module.denoiser.nhead=$nhead ++diffusion_module.denoiser.d_x=$d_x"
 
 #! Work directory (i.e. where the job will run):
 workdir="/home/ckj24/adit-geom/"
