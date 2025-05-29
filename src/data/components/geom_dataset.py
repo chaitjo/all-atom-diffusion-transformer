@@ -67,4 +67,71 @@ class GEOM(InMemoryDataset):
 
     def process(self) -> None:
         return
-        
+
+
+# Separate processing script to convert raw data to PyG format
+# Raw pickle files downloaded from https://github.com/cvignac/MiDi
+
+# import pickle
+# import torch
+# from rdkit import Chem
+# from torch_geometric.data import Data
+# from tqdm.auto import tqdm
+
+
+# for split in ['val', 'test', 'train']:
+
+#     with open(f"raw/{split}_data.pickle", 'rb') as f:
+#         raw_data_list = pickle.load(f)
+#     print(f"Loaded {len(raw_data_list)} entries from {split} set")
+
+#     pyg_data_list = []
+#     smiles_list = []
+#     for entry_idx, entry in tqdm(enumerate(raw_data_list), total=len(raw_data_list)):
+
+#         smiles, data = entry
+#         for conformer_idx, mol in enumerate(data):
+#             if conformer_idx >= 5:
+#                 break
+
+#             N = mol.GetNumAtoms()
+
+#             # 3D coordinates
+#             pos = mol.GetConformer().GetPositions()
+#             pos = torch.tensor(pos, dtype=torch.float)
+
+#             # Atom types
+#             atomic_number = []
+#             for atom in mol.GetAtoms():
+#                 atomic_number.append(atom.GetAtomicNum())
+#             z = torch.tensor(atomic_number, dtype=torch.long)
+
+#             # Metadata
+#             smiles = Chem.MolToSmiles(mol, isomericSmiles=True)
+#             id = f"geom_{split}_{entry_idx}_{conformer_idx}"
+
+#             pyg_data = Data(
+#                 id=id,
+#                 atom_types=z,
+#                 pos=pos,
+#                 # frac_coords=torch.zeros_like(pos),
+#                 # cell=torch.zeros((1, 3, 3)),
+#                 # lattices=torch.zeros(1, 6),
+#                 # lattices_scaled=torch.zeros(1, 6),
+#                 # lengths=torch.zeros(1, 3),
+#                 # lengths_scaled=torch.zeros(1, 3),
+#                 # angles=torch.zeros(1, 3),
+#                 # angles_radians=torch.zeros(1, 3),
+#                 # num_atoms=torch.LongTensor([N]),
+#                 # num_nodes=torch.LongTensor([N]),  # special attribute used for PyG batching
+#                 # spacegroup=torch.zeros(1, dtype=torch.long),  # null spacegroup
+#                 # token_idx=torch.arange(N),
+#                 # dataset_idx=torch.tensor([1], dtype=torch.long),  # 1 --> indicates non-periodic/molecule
+#             )
+#             pyg_data_list.append(pyg_data)
+#             smiles_list.append(smiles)
+
+#     # Save the data
+#     print(f"Saving {len(pyg_data_list)} entries to {split} set")
+#     torch.save(pyg_data_list, f"new/{split}.pt")
+#     torch.save(smiles_list, f"new/{split}_smiles.pt")
